@@ -4,10 +4,10 @@ This library is allows manipulating network request really easy. It supports man
 ## **Install**
 Add following script to the end of your `<head>` section.
 ```
-<script src=""></script>
+<script src="https://cdn.jsdelivr.net/gh/back2lobby/manipulate-http-response/manipulator.js"></script>
 ```
 ## **Usage**
-Create an object of class `Manipulate`. It Accepts Two Callback Functions.
+Create an object of class `Manipulate`. It accepts two callback functions.
 ```
 new Manipulate((url)=>{
     return url === 'https://jsonplaceholder.typicode.com/posts/1';
