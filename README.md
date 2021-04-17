@@ -1,5 +1,7 @@
 # **manipulate-http-resopnse**
-This library is allows manipulating network request really easy. It supports manipulating any response of fetch or XMLHttpRequest with JSON response.  
+This package allows manipulating network request really easy. It will support manipulating any response of fetch or XMLHttpRequest.
+
+> Note: It only supports fetch with JSON response for now.
 
 ## **Install**
 Add following script to the end of your `<head>` section.
