@@ -1,15 +1,16 @@
 # **manipulate-http-resopnse**
-This package allows manipulating network request really easy. It will support manipulating any response of fetch or XMLHttpRequest.
+This package allows manipulating browser based HTTP responses easily. It will support manipulating any response of fetch or XMLHttpRequest.
 
 > Note: It only supports fetch with JSON response for now.
 
 ## **Install**
-Add following script to the end of your `<head>` section.
+1. CDN: Add following script to the end of your `<head>` section.
 ```
 <script src="https://cdn.jsdelivr.net/gh/back2lobby/manipulate-http-response/manipulator.js"></script>
 ```
+2. Normal: Just copy paste `manipulator.js` file into your project.
 ## **Usage**
-Create an object of class `Manipulate`. It accepts two callback functions.
+Create an object of class `Manipulate`. Its constructor accepts two callback functions.
 ```
 new Manipulate((url)=>{
     return url === 'https://jsonplaceholder.typicode.com/posts/1';
