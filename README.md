@@ -1,7 +1,7 @@
 # **manipulate-http-resopnse**
 This package allows manipulating browser based HTTP responses easily. It will support manipulating any response of fetch or XMLHttpRequest.
 
-> Note: It only supports fetch with JSON response for now.
+> Note: It only supports fetch with JSON & TEXT response for now.
 
 ## **Install**
 1. CDN: Add following script to the end of your `<head>` section.
@@ -10,42 +10,68 @@ This package allows manipulating browser based HTTP responses easily. It will su
 ```
 2. Normal: Just copy paste `manipulator.js` file into your project and link it in the `<head>` section.
 ## **Usage**
-Create an object of class `Manipulate`. Its constructor accepts two callback functions.
+Create an object of class `Manipulate`. Its constructor accepts 3 arguments functions.
+
+Syntax for Manipulate Class's Constructor is:
+```
+    constructor(urlValidate,responseType,manipulator)
+```
+### Parameters:
+1. `urlValidate` - Function for validating the URL. It will be passed the URL of response. It should return boolean value.
+2. `responseType` - Supported types for now are "json" and "text".
+3. `manipulator` - Function for manipulating response. It will be passed the response data.
 ```
 new Manipulate((url)=>{
     return url === 'https://jsonplaceholder.typicode.com/posts/1';
-},(res)=>{
+},"json",(res)=>{
     res.title = "This Is Manipulated Title";
     return res;
 })
 ```
-First callback function is for validating the URL and the second callback function is the function which will manipulate.
-
-Basically we are telling the manipulation system that if the first callback returns true for any response then manipulate that response with the second callback.
-
-Manipulation System will pass the url of response to the first callback. While it will pass the response as javascript object (parsed json).
+Basically we are telling the manipulation system that if the first function `urlValidator` returns true for any response then manipulate that response with the second function `manipulator`.
 
 Here is the demo code, where it will manipulate the response as required.
 ```
 //creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/posts/1
 
 new Manipulate((url)=>{
-    return url === 'https://jsonplaceholder.typicode.com/posts/1';
-},(data)=>{
-    data.title = "This Is Manipulated Title";
-    return data;
+  return url === 'https://jsonplaceholder.typicode.com/posts/1';
+},"json",(data)=>{
+  data.title = "This Is Manipulated Title";
+  return data;
 })
 
-//fetch request that will be manipulated
+//fetch request whose response will be manipulated because there is a Manipulate object for it
 
 fetch('https://jsonplaceholder.typicode.com/posts/1')
 .then(response => response.json())
 .then(json => console.log(json))
 
-//fetch request that will not be manipulated
+//fetch request whose response will be manipulated because there is no Manipulate object for it
 
 fetch('https://jsonplaceholder.typicode.com/todos/1')
-  .then(response => response.json())
-  .then(json => console.log(json))
+.then(response => response.json())
+.then(json => console.log(json))
+```
 
+A function `makeResponse` is available that can be used to create a response from given data. Below is an example where we use fetch response multiple times.
+
+```
+//post manipulating request manually - actually this allows you to re-read the response after reading it
+
+fetch('https://jsonplaceholder.typicode.com/todos/1')
+.then(response => response.json())
+.then(data => {
+
+  //first time
+  console.log(data)
+
+  return makeResponse(data);
+})
+.then(response => response.json())
+.then(data => {
+
+  // second time
+  console.log(data)
+})
 ```
