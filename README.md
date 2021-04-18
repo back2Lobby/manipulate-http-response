@@ -30,7 +30,7 @@ new Manipulate((url)=>{
 ```
 Basically we are telling the manipulation system that if the first function `urlValidator` returns true for any response then manipulate that response with the second function `manipulator`.
 
-Here is the demo code, where it will manipulate the response as required.
+Here is the [demo code](https://jsfiddle.net/Back2Lobby/6a3ceboj/7/), where it will manipulate the response as required.
 ```
 //creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/posts/1
 
