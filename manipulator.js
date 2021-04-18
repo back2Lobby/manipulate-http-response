@@ -1,9 +1,14 @@
 window.manipulators = [];
 
 class Manipulate{
-    constructor(urlValidator,manipulate){
+    constructor(urlValidator,responseType,manipulate){
+        // a function to validate/match the response URL - It will be passed the response url
         this.urlValidator = urlValidator;
+        // response type as string i.e. "text","json"
+        this.responseType = responseType;
+        // a function where you will manipulate data - It will be passed the response data to manipulate
         this.manipulate = manipulate;
+        
         window.manipulators.push(this);
     }
 }
@@ -15,72 +20,23 @@ function manipulationSetup(){
     if(isPossible){
         Object.defineProperty(window,'fetch',{
             value:async function(){
-                    const p = await fetch.apply(this, arguments).then(r =>{
+                    const p = await fetch.apply(this, arguments).then(async r => {
                         if(validateResponse(r)){
-                            window.resClone = r.clone();
-                            const reader = window.resClone.body.getReader();
-                            window.respData = "";
-                            return new Promise((res,rej) => {
-                                let stream = new ReadableStream({
-                                    start(controller) {
-                                      // The following function handles each data chunk
-                                      function push() {
-                                        // "done" is a Boolean and value a "Uint8Array"
-                                        reader.read().then( ({done, value}) => {
-                                          // If there is no more data to read
-                                          if (done) {
-                                            res(window.resClone ?? null);
-                                            window.resClone = null;
-                                            controller.close();
-                                            return;
-                                          }
-                                
-                                          //modify data
-                                          let utf8decoder = new TextDecoder();
-                                          let decodedData = utf8decoder.decode(value)
-                                          let useableData = null;
-                                          window.respData += decodedData;
-                                          // Get the data and send it to the browser via the controller
-                                          controller.enqueue(value);
-                                          // Check chunks by logging to the console
-                                          push();
-                                        })
-                                      }
-                                
-                                      push();
-                                    }
-                                  });
-                            })
-                        }
-                        else{
-                            return r;
-                        }
-                    }).then(res => {
-                        if(validateResponse(res)){
-                            let originalResponse = JSON.parse(window.respData);
-
                             //manipulate
-                            let manipulator = window.manipulators.find(m => m.urlValidator(res.url));
+                            let manipulator = window.manipulators.find(m => m.urlValidator(r.url));
+                            let originalResponse 
+                            if(manipulator.responseType == "json"){
+                                originalResponse = await r.json();
+                            }else if(manipulator.responseType == "text"){
+                                originalResponse = await r.text();
+                            }
 
                             let manipulatedResponse = manipulator.manipulate(originalResponse)
 
-                            let utf8encoder = new TextEncoder();
-      
-                            let encodedData = utf8encoder.encode(JSON.stringify(manipulatedResponse));
-                            // Respond with our stream
-                            let customResponse = new Response(encodedData);
-                            Object.defineProperties(customResponse,{
-                                type:{
-                                    value:"basic"
-                                },
-                                url:{
-                                    value:res.url
-                                }
-                            })
-                            return customResponse;
+                            return makeResponse(manipulatedResponse,r)
                         }
                         else{
-                            return res;
+                            return r;
                         }
                     })
                     return Promise.resolve(p).then(res => {
@@ -93,6 +49,42 @@ function manipulationSetup(){
 }
 
 manipulationSetup();
+
+
+/**
+ * 
+ * @param {mix|any} data - Any type of data to be in response body
+ * @param {Response} responseModel - response object that will be copied exactly except the body.
+ * @returns {Response} new response
+ */
+function makeResponse(data,responseModel = null){
+    let utf8encoder = new TextEncoder();
+      
+    let encodedData = utf8encoder.encode(JSON.stringify(data));
+    // Respond with our stream
+    let customResponse = new Response(encodedData);
+    if(responseModel){
+        Object.defineProperties(customResponse,{
+            type:{
+                value:responseModel.type
+            },
+            url:{
+                value:responseModel.url
+            },
+            status:{
+                value:responseModel.status
+            },
+            statusText:{
+                value:responseModel.statusText
+            },
+            headers:{
+                value:responseModel.headers
+            }
+            
+        })
+    }
+    return customResponse;
+}
 
 function validateResponse(response){
     if(response){

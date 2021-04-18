@@ -8,7 +8,7 @@ This package allows manipulating browser based HTTP responses easily. It will su
 ```
 <script src="https://cdn.jsdelivr.net/gh/back2lobby/manipulate-http-response/manipulator.js"></script>
 ```
-2. Normal: Just copy paste `manipulator.js` file into your project.
+2. Normal: Just copy paste `manipulator.js` file into your project and link it in the `<head>` section.
 ## **Usage**
 Create an object of class `Manipulate`. Its constructor accepts two callback functions.
 ```
