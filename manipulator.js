@@ -16,10 +16,11 @@ class Manipulate{
 function manipulationSetup(){
     // For Fetch 
     const fetch = window.fetch || '';
-    const isPossible = fetch.toString().indexOf('native code') !== -1;
+    const isPossible = fetch.toString().indexOf('manipulator') === -1;
     if(isPossible){
         Object.defineProperty(window,'fetch',{
             value:async function(){
+                    //manipulator
                     const p = await fetch.apply(this, arguments).then(async r => {
                         if(validateResponse(r)){
                             //manipulate
