@@ -1,11 +1,19 @@
 //creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/posts/1
 
-new Manipulate((url)=>{
+let m = new Manipulate((url)=>{
   return url === 'https://jsonplaceholder.typicode.com/posts/1';
-},"json",(data)=>{
-  data.title = "This Is Manipulated Title";
-  return data;
 })
+
+m.then(res => res.json())
+  .then(d => {
+    d.title = "Manipulated Title";
+    return d;
+  })
+  .then(d => {
+    d.id = 9999;
+    return d;
+  })
+
 
 //fetch request whose response will be manipulated as there is a Manipulate object for it
 

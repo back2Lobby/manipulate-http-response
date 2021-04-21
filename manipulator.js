@@ -1,15 +1,26 @@
 window.manipulators = [];
 
 class Manipulate{
-    constructor(urlValidator,responseType,manipulate){
+
+    constructor(urlValidator){
         // a function to validate/match the response URL - It will be passed the response url
         this.urlValidator = urlValidator;
-        // response type as string i.e. "text","json"
-        this.responseType = responseType;
-        // a function where you will manipulate data - It will be passed the response data to manipulate
-        this.manipulate = manipulate;
         
         window.manipulators.push(this);
+    }
+    //it makes the object work like a fetch promise
+    then(f){
+        let p = new Promise(res => {
+            this.resolver = res;
+        })
+
+        let n = Promise.resolve(p).then(async (r)=>{
+            return await Promise.resolve(f(r));
+        })
+
+        this.p = n;
+
+        return n;
     }
 }
 
@@ -25,15 +36,8 @@ function manipulationSetup(){
                         if(validateResponse(r)){
                             //manipulate
                             let manipulator = window.manipulators.find(m => m.urlValidator(r.url));
-                            let originalResponse 
-                            if(manipulator.responseType == "json"){
-                                originalResponse = await r.json();
-                            }else if(manipulator.responseType == "text"){
-                                originalResponse = await r.text();
-                            }
-
-                            let manipulatedResponse = manipulator.manipulate(originalResponse)
-
+                            await manipulator.resolver(r);
+                            let manipulatedResponse = await Promise.resolve(manipulator.p);
                             return makeResponse(manipulatedResponse,r)
                         }
                         else{
