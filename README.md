@@ -8,7 +8,7 @@ This package allows manipulating browser based HTTP responses easily. It will su
 ```
 2. Normal: Just copy paste `manipulator.js` file into your project and link it in the `<head>` section.
 ## **Usage**
-Create an object of class `Manipulate`. Its constructor accepts 3 arguments functions.
+Create an object of class `Manipulate`. Its constructor accepts an arguments as closure functions.
 
 Syntax for Manipulate Class's Constructor is:
 
