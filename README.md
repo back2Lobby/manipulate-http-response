@@ -22,7 +22,7 @@ Syntax for Manipulate Class's Constructor is:
 
 ```
 const m = new Manipulate((url)=>{
-    return url === 'https://jsonplaceholder.typicode.com/posts/1';
+    return url === 'https://jsonplaceholder.typicode.com/todos/1';
 })
 
 m.then(res => res.json())
@@ -37,11 +37,11 @@ Basically we are telling the manipulation system that if the function passed in 
 
 ### **Example:**
 
-Creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/posts/1. Here is the [CodePen demo](https://codepen.io/back2lobby/pen/bGgmJaQ?editors=1011) for this example.
+Creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/todos/1. Here is the [CodePen demo](https://codepen.io/back2lobby/pen/bGgmJaQ?editors=1011) for this example.
 
 ```
 const m = new Manipulate((url)=>{
-  return url === 'https://jsonplaceholder.typicode.com/posts/1';
+  return url === 'https://jsonplaceholder.typicode.com/todos/1';
 })
 
 m.then(res => res.json())
@@ -58,7 +58,7 @@ m.then(res => res.json())
 Now in actual fetch request we are getting manipulated response
 
 ```
-fetch('https://jsonplaceholder.typicode.com/posts/1')
+fetch('https://jsonplaceholder.typicode.com/todos/1')
 .then(response => response.json())
 .then(json => console.log(json))
 ```
