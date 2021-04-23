@@ -65,29 +65,36 @@ manipulationSetup();
  * @param {Response} responseModel - response object that will be copied exactly except the body.
  * @returns {Response} new response
  */
-function makeResponse(data,responseModel = null){
+function makeResponse(data,options,responseModel = null){
     let utf8encoder = new TextEncoder();
       
     let encodedData = utf8encoder.encode(JSON.stringify(data));
     // Respond with our stream
     let customResponse = new Response(encodedData);
-    if(responseModel){
+    if((responseModel && responseModel instanceof Object && responseModel.constructor && responseModel.constructor.name == "Response") || (options && options instanceof Object)){
         Object.defineProperties(customResponse,{
             type:{
-                value:responseModel.type
+                value: (responseModel ? responseModel.type : options.type) ?? "default"
             },
             url:{
-                value:responseModel.url
+                value:(responseModel ? responseModel.url : options.url) ?? ""
             },
             status:{
-                value:responseModel.status
+                value:(responseModel ? responseModel.status : options.status) ?? 200
             },
             statusText:{
-                value:responseModel.statusText
+                value:(responseModel ? responseModel.statusText : options.statusText) ?? ""
+            },
+            ok:{
+                value:(responseModel ? responseModel.ok : options.ok) ?? true
             },
             headers:{
-                value:responseModel.headers
+                value:(responseModel ? responseModel.headers : options.headers) ?? new Headers()
+            },
+            redirected:{
+                value:(responseModel ? responseModel.redirected : options.redirected) ?? false
             }
+
             
         })
     }
