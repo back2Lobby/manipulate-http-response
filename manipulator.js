@@ -2,6 +2,12 @@ window.manipulators = [];
 
 class Manipulate{
 
+    a = [];
+
+    p = new Promise((res,rej) => {
+        this.resolver = res;
+    })
+
     constructor(urlValidator){
         // a function to validate/match the response URL - It will be passed the response url
         this.urlValidator = urlValidator;
@@ -9,18 +15,15 @@ class Manipulate{
         window.manipulators.push(this);
     }
     //it makes the object work like a fetch promise
-    then(f){
-        let p = new Promise(res => {
-            this.resolver = res;
-        })
-
-        let n = Promise.resolve(p).then(async (r)=>{
-            return await Promise.resolve(f(r));
-        })
-
-        this.p = n;
-
-        return n;
+    then(func){
+        this.a.push(func);
+        return this;
+    }
+    async process(data){
+        for(let f of this.a){
+          data = await f(data)  
+        }
+        this.resolver(data);
     }
 }
 
@@ -36,7 +39,7 @@ function manipulationSetup(){
                         if(validateResponse(r)){
                             //manipulate
                             let manipulator = window.manipulators.find(m => m.urlValidator(r.url));
-                            await manipulator.resolver(r);
+                            manipulator.process(r);
                             let manipulatedResponse = await Promise.resolve(manipulator.p);
                             return makeResponse(manipulatedResponse,r)
                         }
