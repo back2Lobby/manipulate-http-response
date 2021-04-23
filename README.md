@@ -37,7 +37,7 @@ Basically we are telling the manipulation system that if the function passed in 
 
 ### **Example:**
 
-Creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/todos/1. Here is the [JSFiddle demo](https://jsfiddle.net/Back2Lobby/mtow0uL1/1/) for this example.
+Creating a manipulator for all responses with url https://jsonplaceholder.typicode.com/todos/1. Here is the [JSFiddle demo](https://jsfiddle.net/Back2Lobby/mtow0uL1/2/) for this example.
 
 ```
 const m = new Manipulate((url)=>{
