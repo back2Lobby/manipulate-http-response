@@ -77,7 +77,7 @@ fetch('https://jsonplaceholder.typicode.com/todos/1')
   //first time
   console.log(data)
 
-  return makeResponse(data);
+  return makeResponse(data,{statusText:"here is something"});
 
 })
 .then(response => response.json())
