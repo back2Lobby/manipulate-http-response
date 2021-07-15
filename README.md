@@ -1,5 +1,5 @@
 # **manipulate-http-resopnse**
-This package allows manipulating browser based HTTP responses easily. It will support manipulating any response of fetch or XMLHttpRequest. It can also be used to re-read responses in fetch requests.
+This package allows manipulating browser based HTTP responses easily. It will support manipulating any response of Fetch API. It can also be used to re-read responses in fetch requests.
 
 ## **Install**
 1. CDN: Add following script to the end of your `<head>` section.
