@@ -4,10 +4,6 @@ class Manipulate{
 
     a = [];
 
-    p = new Promise((res,rej) => {
-        this.resolver = res;
-    })
-
     constructor(urlValidator){
         // a function to validate/match the response URL - It will be passed the response url
         this.urlValidator = urlValidator;
@@ -20,10 +16,10 @@ class Manipulate{
         return this;
     }
     async process(data){
-        for(let f of this.a){
+        for await(let f of this.a){
           data = await f(data)  
         }
-        this.resolver(data);
+        return data;
     }
 }
 
@@ -35,13 +31,13 @@ function manipulationSetup(){
         Object.defineProperty(window,'fetch',{
             value:async function(){
                     //manipulator
-                    const p = await fetch.apply(this, arguments).then(async r => {
+                    let p = await fetch.apply(this, arguments).then(async r => {
                         if(validateResponse(r)){
                             //manipulate
                             let manipulator = window.manipulators.find(m => m.urlValidator(r.url));
-                            manipulator.process(r);
-                            let manipulatedResponse = await Promise.resolve(manipulator.p);
-                            return makeResponse(manipulatedResponse,r)
+                            let manipulatedResponse = await manipulator.process(r);
+
+                            return makeResponse(manipulatedResponse,null,r);
                         }
                         else{
                             return r;
@@ -62,12 +58,12 @@ manipulationSetup();
 /**
  * 
  * @param {mix|any} data - Any type of data to be in response body
+ * @param {Object} option - An object with any options you want to override in response object
  * @param {Response} responseModel - response object that will be copied exactly except the body.
  * @returns {Response} new response
  */
-function makeResponse(data,options,responseModel = null){
+function makeResponse(data,options = null,responseModel = null){
     let utf8encoder = new TextEncoder();
-      
     let encodedData = utf8encoder.encode(JSON.stringify(data));
     // Respond with our stream
     let customResponse = new Response(encodedData);
@@ -94,8 +90,6 @@ function makeResponse(data,options,responseModel = null){
             redirected:{
                 value:(responseModel ? responseModel.redirected : options.redirected) ?? false
             }
-
-            
         })
     }
     return customResponse;
